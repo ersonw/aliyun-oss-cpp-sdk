@@ -147,7 +147,7 @@ set_target_properties(${PROJECT_NAME}${STATIC_LIB_SUFFIX}
     )
 
 target_include_directories(${PROJECT_NAME}${STATIC_LIB_SUFFIX}
-    PRIVATE include
+    PUBLIC include
     PRIVATE include/alibabacloud/oss    
     PRIVATE src/external/)
 
@@ -155,7 +155,7 @@ target_include_directories(${PROJECT_NAME}${STATIC_LIB_SUFFIX}
     PRIVATE ${CRYPTO_INCLUDE_DIRS}
     PRIVATE ${CLIENT_INCLUDE_DIRS})
 
-target_compile_options(${PROJECT_NAME}${STATIC_LIB_SUFFIX} 
+target_compile_options(${PROJECT_NAME}${STATIC_LIB_SUFFIX}
     PRIVATE "${SDK_COMPILER_FLAGS}" "${EXTRA_DEFINE}")
 
 #shared lib
