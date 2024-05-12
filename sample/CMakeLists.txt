@@ -48,11 +48,9 @@ target_include_directories(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME} cpp-sdk)	
 target_link_libraries(${PROJECT_NAME} ${CRYPTO_LIBS})
 target_link_libraries(${PROJECT_NAME} ${CLIENT_LIBS})
-message(WARNING ${TARGET_OS})
-if (${TARGET_OS} STREQUAL "LINUX")
-target_link_libraries(${PROJECT_NAME} pthread)	
-endif()
+
 if(CMAKE_COMPILER_IS_GNUCXX)
+	message(STATUS ${TARGET_OS})
 	target_link_libraries(${PROJECT_NAME} pthread)
 endif ()
 target_compile_options(${PROJECT_NAME} 
