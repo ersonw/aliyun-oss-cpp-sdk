@@ -47,7 +47,12 @@ static std::string LogPrefix(LogLevel logLevel, const char* tag)
 #ifdef WIN32
     ::localtime_s(&tm, &t);
 #else
+#ifdef __MINGW32__
+    // MinGW 环境
+    ::localtime_s(&tm, &t);
+#else
     ::localtime_r(&t, &tm);
+#endif
 #endif
 #if defined(__GNUG__) && __GNUC__ < 5
     char tmbuff[64];

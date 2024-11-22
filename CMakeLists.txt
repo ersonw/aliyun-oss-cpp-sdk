@@ -62,22 +62,24 @@ message(STATUS "TARGET_OS: ${TARGET_OS}")
 add_definitions(-DPLATFORM_${TARGET_OS})
 
 #Find dependency Library, curl, openssl
-if (${TARGET_OS} STREQUAL "WINDOWS")
+
+if (${TARGET_OS} STREQUAL "WINDOWS" AND NOT MINGW)
 	set(WLIB_TARGET "Win32")
 	if (CMAKE_CL_64)
 	set(WLIB_TARGET "x64")
 	endif()
-	set(CRYPTO_LIBS 
-		${CMAKE_SOURCE_DIR}/third_party/lib/${WLIB_TARGET}/ssleay32.lib 
+	set(CRYPTO_LIBS
+		${CMAKE_SOURCE_DIR}/third_party/lib/${WLIB_TARGET}/ssleay32.lib
 		${CMAKE_SOURCE_DIR}/third_party/lib/${WLIB_TARGET}/libeay32.lib)
-	set(CRYPTO_INCLUDE_DIRS 
-		${CMAKE_SOURCE_DIR}/third_party/include) 
+	set(CRYPTO_INCLUDE_DIRS
+		${CMAKE_SOURCE_DIR}/third_party/include)
 
-	set(CLIENT_LIBS 
-		${CMAKE_SOURCE_DIR}/third_party/lib/${WLIB_TARGET}/libcurl.lib) 
-	set(CLIENT_INCLUDE_DIRS 
-		${CMAKE_SOURCE_DIR}/third_party/include) 
+	set(CLIENT_LIBS
+		${CMAKE_SOURCE_DIR}/third_party/lib/${WLIB_TARGET}/libcurl.lib)
+	set(CLIENT_INCLUDE_DIRS
+		${CMAKE_SOURCE_DIR}/third_party/include)
 else()
+
 	include(FindCURL)
 	include(FindOpenSSL)
 
@@ -99,7 +101,8 @@ else()
 endif()
 
 #Compiler flags
-list(APPEND SDK_COMPILER_FLAGS "-std=c++11")
+#list(APPEND SDK_COMPILER_FLAGS "-std=c++11")
+set(CMAKE_CXX_STANDARD 14)
 if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
 	list(APPEND SDK_COMPILER_FLAGS "/MP")
 	if (NOT ENABLE_RTTI)
@@ -112,6 +115,16 @@ elseif (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 	endif()
 	
 	list(APPEND SDK_COMPILER_FLAGS "-Wall" "-Werror" "-pedantic" "-Wextra")
+elseif (CMAKE_CXX_COMPILER MATCHES "mingw")
+	list(APPEND SDK_COMPILER_FLAGS "-fno-exceptions" "-fPIC")
+	if (NOT ENABLE_RTTI)
+		list(APPEND SDK_COMPILER_FLAGS "-fno-rtti")
+	endif()
+	if (ENABLE_COVERAGE)
+		SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fprofile-arcs -ftest-coverage")
+		SET(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -fprofile-arcs -ftest-coverage")
+		SET(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG} -fprofile-arcs -ftest-coverage")
+	endif()
 else()
 	list(APPEND SDK_COMPILER_FLAGS "-fno-exceptions" "-fPIC")
 	if (NOT ENABLE_RTTI)

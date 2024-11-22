@@ -27,6 +27,9 @@
 #include <direct.h>
 #include <io.h>
 #include <sys/stat.h>
+#include <codecvt>
+#include <locale>
+
 #define  oss_access(a)  ::_access((a), 0)
 #define  oss_mkdir(a)   ::_mkdir(a)
 #define  oss_rmdir(a)   ::_rmdir(a)
@@ -211,7 +214,13 @@ std::shared_ptr<std::fstream> AlibabaCloud::OSS::GetFstreamByPath(
 {
 #ifdef _WIN32
     if (!pathw.empty()) {
-        return std::make_shared<std::fstream>(pathw, mode);
+//        return std::make_shared<std::fstream>(pathw, mode);
+        if (!pathw.empty()) {
+            // 将 std::wstring 转换为 std::string
+            std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
+            std::string path_utf8 = converter.to_bytes(pathw);
+            return std::make_shared<std::fstream>(path_utf8, mode);
+        }
     }
 #else
     ((void)(pathw));
