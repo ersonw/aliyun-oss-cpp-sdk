@@ -35,7 +35,7 @@ namespace OSS
         std::string remoteAddr;
     };
 
-    using LiveRecordVec = vector<LiveRecord>;
+    using LiveRecordVec = std::vector<LiveRecord>;
 
     class ALIBABACLOUD_OSS_EXPORT GetLiveChannelHistoryResult : public OssResult
     {
